@@ -223,3 +223,28 @@ CREATE POLICY "Users can create bookings"
 CREATE POLICY "Admins can view all bookings"
   ON public.class_bookings FOR SELECT
   USING (public.has_role(auth.uid(), 'admin'));
+
+-- ========================================
+-- 8. Wallet Transactions Table
+-- ========================================
+CREATE TYPE public.transaction_type AS ENUM ('deposit', 'withdrawal', 'order_payment', 'class_payment', 'refund');
+
+CREATE TABLE public.wallet_transactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  type transaction_type NOT NULL,
+  description TEXT,
+  order_id UUID REFERENCES public.orders(id),
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+
+ALTER TABLE public.wallet_transactions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own transactions"
+  ON public.wallet_transactions FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Admins can view all transactions"
+  ON public.wallet_transactions FOR SELECT
+  USING (public.has_role(auth.uid(), 'admin'));
