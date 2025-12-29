@@ -170,3 +170,30 @@ CREATE POLICY "Admins can view all orders"
 CREATE POLICY "Admins can update orders"
   ON public.orders FOR UPDATE
   USING (public.has_role(auth.uid(), 'admin'));
+
+-- ========================================
+-- 6. Classes Table
+-- ========================================
+CREATE TYPE public.class_type AS ENUM ('in_person', 'online');
+
+CREATE TABLE public.classes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  date DATE NOT NULL,
+  time_slot TIME NOT NULL,
+  class_type class_type NOT NULL,
+  max_capacity INTEGER DEFAULT 12 NOT NULL,
+  current_bookings INTEGER DEFAULT 0 NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+
+ALTER TABLE public.classes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can view active classes"
+  ON public.classes FOR SELECT
+  USING (is_active = true);
+
+CREATE POLICY "Admins can manage classes"
+  ON public.classes FOR ALL
+  USING (public.has_role(auth.uid(), 'admin'));
