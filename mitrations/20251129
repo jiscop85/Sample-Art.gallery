@@ -111,3 +111,62 @@ CREATE POLICY "Anyone can view active artists"
 CREATE POLICY "Admins can manage artists"
   ON public.artists FOR ALL
   USING (public.has_role(auth.uid(), 'admin'));
+
+-- ========================================
+-- 5. Orders Table
+-- ========================================
+CREATE TYPE public.order_status AS ENUM ('pending', 'ai_preview', 'confirmed', 'in_progress', 'completed', 'cancelled');
+CREATE TYPE public.canvas_size AS ENUM ('30x40', '50x70', '70x100', '100x100', 'custom');
+CREATE TYPE public.material_type AS ENUM ('oil', 'watercolor', 'acrylic', 'pencil', 'digital');
+
+CREATE TABLE public.orders (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  style_id UUID REFERENCES public.painting_styles(id) NOT NULL,
+  artist_id UUID REFERENCES public.artists(id),
+  
+  -- Order details
+  status order_status DEFAULT 'pending' NOT NULL,
+  canvas_size canvas_size NOT NULL,
+  material material_type NOT NULL,
+  reference_image_url TEXT,
+  ai_preview_url TEXT,
+  ai_prompt TEXT,
+  customer_notes TEXT,
+  voice_note_url TEXT,
+  
+  -- Pricing
+  base_price DECIMAL(10, 2) NOT NULL,
+  rush_fee DECIMAL(10, 2) DEFAULT 0,
+  total_price DECIMAL(10, 2) NOT NULL,
+  
+  -- Delivery
+  is_rush BOOLEAN DEFAULT false,
+  estimated_delivery_date DATE,
+  actual_delivery_date DATE,
+  
+  -- Progress tracking
+  progress_percentage INTEGER DEFAULT 0,
+  progress_images TEXT[],
+  
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own orders"
+  ON public.orders FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create orders"
+  ON public.orders FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Admins can view all orders"
+  ON public.orders FOR SELECT
+  USING (public.has_role(auth.uid(), 'admin'));
+
+CREATE POLICY "Admins can update orders"
+  ON public.orders FOR UPDATE
+  USING (public.has_role(auth.uid(), 'admin'));
