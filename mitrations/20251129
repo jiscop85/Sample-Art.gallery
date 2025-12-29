@@ -59,3 +59,30 @@ AS $$
     WHERE user_id = _user_id AND role = _role
   )
 $$;
+
+-- ========================================
+-- 3. Painting Styles Table
+-- ========================================
+CREATE TABLE public.painting_styles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name_fa TEXT NOT NULL,
+  name_en TEXT NOT NULL,
+  description TEXT,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+
+ALTER TABLE public.painting_styles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can view active styles"
+  ON public.painting_styles FOR SELECT
+  USING (is_active = true);
+
+-- Insert default styles
+INSERT INTO public.painting_styles (name_fa, name_en, description) VALUES
+  ('رئالیسم', 'Realism', 'نقاشی با جزئیات کامل و دقیق'),
+  ('پرتره', 'Portrait', 'چهره‌نگاری حرفه‌ای و هنری'),
+  ('آبستره', 'Abstract', 'هنر مدرن و انتزاعی'),
+  ('آبرنگ', 'Watercolor', 'نقاشی با رنگ‌های شفاف'),
+  ('رنگ روغن', 'Oil Painting', 'تکنیک کلاسیک و ماندگار'),
+  ('دیجیتال آرت', 'Digital Art', 'هنر دیجیتال و نوین');
