@@ -77,3 +77,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return { error };
     }
   };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+  };
+
+  const value = {
+    user,
+    session,
+    isLoading,
+    signUp,
+    signIn,
+    signOut,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
+
