@@ -172,3 +172,67 @@ const Auth = () => {
                   </Button>
                 </form>
               </TabsContent>
+
+   <TabsContent value="signup">
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-name">نام کامل</Label>
+                    <Input
+                      id="signup-name"
+                      name="fullName"
+                      type="text"
+                      placeholder="نام و نام خانوادگی"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email">ایمیل</Label>
+                    <Input
+                      id="signup-email"
+                      name="email"
+                      type="email"
+                      placeholder="example@email.com"
+                      required
+                      dir="ltr"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password">رمز عبور</Label>
+                    <Input
+                      id="signup-password"
+                      name="password"
+                      type="password"
+                      placeholder="حداقل 6 کاراکتر"
+                      required
+                      dir="ltr"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        در حال ثبت‌نام...
+                      </>
+                    ) : (
+                      "ثبت‌نام"
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+
+        <p className="text-center text-sm text-muted-foreground mt-4">
+          با ثبت‌نام، قوانین و مقررات را می‌پذیرید
+        </p>
+      </motion.div>
+    </div>
+  );
+};
+
+export default Auth;
