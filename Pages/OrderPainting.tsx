@@ -390,3 +390,51 @@ const OrderPainting = () => {
                       </div>
                     </div>
                   </div>
+
+ <Button onClick={handleSubmitOrder} disabled={isLoading} size="lg" className="w-full">
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        در حال ثبت...
+                      </>
+                    ) : (
+                      "تایید و پرداخت"
+                    )}
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Navigation */}
+            <div className="flex justify-between pt-6 border-t">
+              <Button
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStep === 1}
+              >
+                <ChevronRight className="w-4 h-4 ml-2" />
+                قبلی
+              </Button>
+              
+              {currentStep < 4 && (
+                <Button onClick={nextStep} disabled={!formData.styleId && currentStep === 1}>
+                  بعدی
+                  <ChevronLeft className="w-4 h-4 mr-2" />
+                </Button>
+              )}
+
+              {currentStep === 4 && aiPreview && (
+                <Button onClick={nextStep}>
+                  تایید و ادامه
+                  <ChevronLeft className="w-4 h-4 mr-2" />
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default OrderPainting;
