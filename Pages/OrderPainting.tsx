@@ -137,3 +137,103 @@ const OrderPainting = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+ return (
+    <div className="min-h-screen bg-canvas-texture py-12 px-4">
+      <div className="container mx-auto max-w-4xl">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-display font-bold text-gradient mb-2">
+            سفارش نقاشی با AI
+          </h1>
+          <p className="text-muted-foreground">
+            نقاشی رویایی خود را با کمک هوش مصنوعی بسازید
+          </p>
+        </div>
+
+        {/* Progress */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            {steps.map((step, index) => (
+              <div key={step.id} className="flex items-center">
+                <div className={`flex flex-col items-center ${index < steps.length - 1 ? "flex-1" : ""}`}>
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
+                      currentStep >= step.id
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {step.id}
+                  </div>
+                  <span className="text-xs mt-2 hidden md:block">{step.title}</span>
+                </div>
+                {index < steps.length - 1 && (
+                  <div className={`h-1 flex-1 mx-2 rounded ${currentStep > step.id ? "bg-primary" : "bg-muted"}`} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Content */}
+        <Card className="border-2">
+          <CardHeader>
+            <CardTitle>{steps[currentStep - 1].title}</CardTitle>
+            <CardDescription>{steps[currentStep - 1].description}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <AnimatePresence mode="wait">
+              {currentStep === 1 && (
+                <motion.div
+                  key="step1"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                >
+                  {styles.map((style) => (
+                    <Card
+                      key={style.id}
+                      className={`cursor-pointer transition-all hover:shadow-md ${
+                        formData.styleId === style.id ? "border-2 border-primary" : ""
+                      }`}
+                      onClick={() => setFormData({ ...formData, styleId: style.id })}
+                    >
+                      <CardContent className="p-4">
+                        <h3 className="font-bold text-lg mb-1">{style.name_fa}</h3>
+                        <p className="text-sm text-muted-foreground mb-2">{style.name_en}</p>
+                        <p className="text-sm">{style.description}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </motion.div>
+              )}
+
+              {currentStep === 2 && (
+                <motion.div
+                  key="step2"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <Label>آپلود عکس مرجع (اختیاری)</Label>
+                    <div className="mt-2 border-2 border-dashed rounded-lg p-8 text-center hover:bg-muted/50 transition-colors cursor-pointer">
+                      <Upload className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
+                        برای آپلود کلیک کنید یا فایل را بکشید
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="aiPrompt">پرامپت برای AI (پیشنهادی)</Label>
+                    <Textarea
+                      id="aiPrompt"
+                      placeholder="مثال: پرتره دختر با لباس سنتی ایرانی در سبک ون‌گوگ"
+                      value={formData.aiPrompt}
+                      onChange={(e) => setFormData({ ...formData, aiPrompt: e.target.value })}
+                      rows={3}
+                    />
+                  </div>
