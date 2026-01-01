@@ -99,3 +99,41 @@ const OrderPainting = () => {
                         formData.canvasSize === "50x70" ? 800000 :
                         formData.canvasSize === "70x100" ? 1200000 : 1500000;
       const rushFee = formData.isRush ? 300000 : 0;
+
+  const { error } = await supabase.from("orders").insert({
+        user_id: user?.id,
+        style_id: formData.styleId,
+        canvas_size: formData.canvasSize,
+        material: formData.material,
+        ai_prompt: formData.aiPrompt,
+        customer_notes: formData.customerNotes,
+        ai_preview_url: aiPreview,
+        base_price: basePrice,
+        rush_fee: rushFee,
+        total_price: basePrice + rushFee,
+        is_rush: formData.isRush,
+        status: "ai_preview",
+      } as any);
+
+      if (error) throw error;
+
+      toast.success("سفارش شما ثبت شد! 🎨");
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast.error("خطا در ثبت سفارش");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const nextStep = () => {
+    if (currentStep < steps.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
