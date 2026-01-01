@@ -237,3 +237,76 @@ const OrderPainting = () => {
                       rows={3}
                     />
                   </div>
+
+ <div>
+                    <Label htmlFor="notes">توضیحات تکمیلی</Label>
+                    <Textarea
+                      id="notes"
+                      placeholder="توضیحات خود را بنویسید..."
+                      value={formData.customerNotes}
+                      onChange={(e) => setFormData({ ...formData, customerNotes: e.target.value })}
+                      rows={4}
+                    />
+                  </div>
+                </motion.div>
+              )}
+
+              {currentStep === 3 && (
+                <motion.div
+                  key="step3"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-6"
+                >
+                  <div>
+                    <Label>سایز بوم</Label>
+                    <RadioGroup
+                      value={formData.canvasSize}
+                      onValueChange={(value) => setFormData({ ...formData, canvasSize: value })}
+                      className="grid grid-cols-2 gap-4 mt-2"
+                    >
+                      {["30x40", "50x70", "70x100", "100x100"].map((size) => (
+                        <div key={size} className="flex items-center space-x-2 space-x-reverse">
+                          <RadioGroupItem value={size} id={size} />
+                          <Label htmlFor={size} className="cursor-pointer">
+                            {size} سانتی‌متر
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="material">نوع متریال</Label>
+                    <Select
+                      value={formData.material}
+                      onValueChange={(value) => setFormData({ ...formData, material: value })}
+                    >
+                      <SelectTrigger id="material">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="oil">رنگ روغن</SelectItem>
+                        <SelectItem value="watercolor">آبرنگ</SelectItem>
+                        <SelectItem value="acrylic">اکریلیک</SelectItem>
+                        <SelectItem value="pencil">مداد رنگی</SelectItem>
+                        <SelectItem value="digital">دیجیتال پرینت</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-center space-x-2 space-x-reverse">
+                    <input
+                      type="checkbox"
+                      id="rush"
+                      checked={formData.isRush}
+                      onChange={(e) => setFormData({ ...formData, isRush: e.target.checked })}
+                      className="rounded"
+                    />
+                    <Label htmlFor="rush" className="cursor-pointer">
+                      سفارش فوری (7 روزه) - هزینه اضافه: 300,000 تومان
+                    </Label>
+                  </div>
+                </motion.div>
+              )}
