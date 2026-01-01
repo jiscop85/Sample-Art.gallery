@@ -48,3 +48,54 @@ const OrderPainting = () => {
   useEffect(() => {
     loadStyles();
   }, []);
+
+ const loadStyles = async () => {
+    const { data, error } = await supabase
+      .from("painting_styles")
+      .select("*")
+      .eq("is_active", true);
+
+    if (error) {
+      toast.error("خطا در بارگذاری سبک‌ها");
+    } else {
+      setStyles(data || []);
+    }
+  };
+
+  const generateAIPreview = async () => {
+    if (!formData.aiPrompt && !formData.customerNotes) {
+      toast.error("لطفاً توضیحاتی برای نقاشی وارد کنید");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const selectedStyle = styles.find((s) => s.id === formData.styleId);
+      const prompt = `${formData.aiPrompt || formData.customerNotes}. Style: ${selectedStyle?.name_en}. High quality painting, professional artwork`;
+
+      const { data, error } = await supabase.functions.invoke("generate-ai-preview", {
+        body: { prompt },
+      });
+
+      if (error) throw error;
+
+      if (data?.imageUrl) {
+        setAiPreview(data.imageUrl);
+        toast.success("پیش‌نمایش ساخته شد! ✨");
+        setCurrentStep(4);
+      }
+    } catch (error: any) {
+      console.error("AI Preview Error:", error);
+      toast.error("خطا در ساخت پیش‌نمایش");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmitOrder = async () => {
+    setIsLoading(true);
+    try {
+      const basePrice = formData.canvasSize === "30x40" ? 500000 :
+                        formData.canvasSize === "50x70" ? 800000 :
+                        formData.canvasSize === "70x100" ? 1200000 : 1500000;
+      const rushFee = formData.isRush ? 300000 : 0;
