@@ -310,3 +310,83 @@ const OrderPainting = () => {
                   </div>
                 </motion.div>
               )}
+
+ {currentStep === 4 && (
+                <motion.div
+                  key="step4"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-4"
+                >
+                  {!aiPreview ? (
+                    <div className="text-center py-12">
+                      <Sparkles className="w-16 h-16 mx-auto mb-4 text-primary" />
+                      <p className="text-lg mb-4">پیش‌نمایش نقاشی با AI بسازید</p>
+                      <Button onClick={generateAIPreview} disabled={isLoading} size="lg">
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            در حال ساخت...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            ساخت پیش‌نمایش
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="aspect-square rounded-lg overflow-hidden bg-muted mb-4">
+                        <img src={aiPreview} alt="AI Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <p className="text-sm text-muted-foreground text-center mb-4">
+                        این پیش‌نمایش با هوش مصنوعی ساخته شده است. نقاشی نهایی توسط هنرمند واقعی کشیده می‌شود.
+                      </p>
+                      <Button onClick={generateAIPreview} variant="outline" className="w-full" disabled={isLoading}>
+                        ساخت مجدد
+                      </Button>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {currentStep === 5 && (
+                <motion.div
+                  key="step5"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-4"
+                >
+                  <div className="bg-muted/50 rounded-lg p-6">
+                    <h3 className="font-bold mb-4">خلاصه سفارش</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>سایز:</span>
+                        <span className="font-bold">{formData.canvasSize} سانتی‌متر</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>متریال:</span>
+                        <span className="font-bold">{formData.material}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>قیمت پایه:</span>
+                        <span>500,000 تومان</span>
+                      </div>
+                      {formData.isRush && (
+                        <div className="flex justify-between">
+                          <span>هزینه فوری:</span>
+                          <span>300,000 تومان</span>
+                        </div>
+                      )}
+                      <div className="border-t pt-2 flex justify-between font-bold text-base">
+                        <span>جمع کل:</span>
+                        <span className="text-primary">
+                          {(formData.isRush ? 800000 : 500000).toLocaleString()} تومان
+                        </span>
+                      </div>
+                    </div>
+                  </div>
